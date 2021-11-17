@@ -9,55 +9,62 @@
         choice = window.prompt("Wybierz: Szyfrowanie 1 Deszyfrowanie 2");
         }while(!(choice == 1 || choice ==2))
         const key = window.prompt("Podaj klucz:");
-        const message = window.prompt("Podaj wiadomość do przetworzenia:");
-        const messagelength=message.length
-        let resultmessage=[];
+        let message = window.prompt("Podaj wiadomość do przetworzenia:");
+        if(choice==2){
+            message = decodeURIComponent(escape(window.atob(message)));
+        }
+        const messageLength=message.length
+        const charRange = 1048576;
+        let resultMessage=[];
         let temp=[];
         let i = 0;
-        const keylength = key.length
-        const keymod = Math.floor(Math.sqrt(keylength)*(1+keylength%7))
-        const keymod1 = Math.floor(keymod/2)
+        const keyLength = key.length
+        const keyMod = Math.floor(Math.sqrt(keyLength)*(1+keyLength%7))
+        const keyMod1 = Math.floor(keyMod/2)
         i=0;
         let current = 0;
         if(choice==1){
-            while(i<messagelength){
-                temp[i]=String.fromCharCode((message.charCodeAt(i)+key.charCodeAt(i%keylength))%1048576);
+            while(i<messageLength){
+                temp[i]=String.fromCharCode((message.charCodeAt(i)+key.charCodeAt(i%keyLength))%charRange);
                 i++;
             }
-            for(i=0;i<messagelength;i++){
-                resultmessage[i]=temp[i];
+            for(i=0;i<messageLength;i++){
+                resultMessage[i]=temp[i];
             }
-            while(current+keymod<messagelength){
-                for(i=0;i<keymod;i++){
-                    resultmessage[current+i]=temp[current+(i+keymod1)%keymod];
+            while(current+keyMod<messageLength){
+                for(i=0;i<keyMod;i++){
+                    resultMessage[current+i]=temp[current+(i+keyMod1)%keyMod];
                 }
-                current+=keymod;
-            }            
+                current+=keyMod;
+            } 
         }
         if(choice==2){
-            for(i=0;i<messagelength;i++){
+            for(i=0;i<messageLength;i++){
                 temp[i]=message[i];
             }
-            while(current+keymod<messagelength){
-                for(i=0;i<keymod;i++){
-                    temp[current+i]=message[current+(i+keymod-keymod1)%keymod];
+            while(current+keyMod<messageLength){
+                for(i=0;i<keyMod;i++){
+                    temp[current+i]=message[current+(i+keyMod-keyMod1)%keyMod];
                 }
-                current+=keymod;
+                current+=keyMod;
             }
-            resultmessage[0]=temp.join("")
-            temp=resultmessage[0]
+            resultMessage[0]=temp.join("")
+            temp=resultMessage[0]
             i=0;    
-            while(i<messagelength){
-                resultmessage[i]=String.fromCharCode((temp.charCodeAt(i)-key.charCodeAt(i%keylength)+1048576)%1048576);
+            while(i<messageLength){
+                resultMessage[i]=String.fromCharCode((temp.charCodeAt(i)-key.charCodeAt(i%keyLength)+charRange)%charRange);
                 i++;
             }
         }
-        const resultmessagelength=resultmessage.length
+        const resultMessageLength=resultMessage.length
         i=0;
         let result="";
-        while(i<resultmessagelength){
-            result+=resultmessage[i];
+        while(i<resultMessageLength){
+            result+=resultMessage[i];
             i++;
+        }
+        if(choice==1){
+            result=window.btoa(unescape(encodeURIComponent(result)));
         }
     </script>
     <p>Przetworzony tekst:</p>
